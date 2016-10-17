@@ -4,21 +4,20 @@ var request = require('superagent'),
     Server_Session;
 
 connector.test = function() {
-    var url = 'http://yx32-admin.stg2.24cp.com/?act=runfast_room&st=main&action=main&id=&page=1&rows=3';
+    var url = '';
     var data = {
         rows: 3
     };
     request
         .post(url)
         .set('Content-Type', 'application/json')
-        .set('Cookie', 'YOUXIADMINSID=495f16727621c615c2ca97940e239b02344c9e27')
+        .set('Cookie', 'SID=test')
         .send(data)
         .end(function(err, resp) {
             console.log(err, resp.body);
         });
 }
 
-connector.test();
 
 connector.EstablishSession = function() {
     var url = baseURL + 'session/establish';
