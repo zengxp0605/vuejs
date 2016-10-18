@@ -32,7 +32,7 @@ const mutations = {
 
     [types.USER_BET](state, params) {
         console.log('========', state.userId);
-     
+
         global.socket.send(global.socket.cmd.bet, params);
     },
 
@@ -81,7 +81,10 @@ const mutations = {
                 var speakerId = data.speakerId;
                 state.users[speakerId].isSpeaker = true;
             },
-
+            gameOver: function (data) {
+                console.log('=========> gameOver:', JSON.stringify(data, true, ' '));
+                
+            },
         };
         global.socket.setRouter(serverRouter);
     }

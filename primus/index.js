@@ -12,6 +12,7 @@ var authorize = require('./server/libs/authorize')
 // Create an Express application.
 //
 var app = express();
+global.app = app;
 
 app.use(express.static(__dirname + '/public'));
 app.use(bodyParser.json());
@@ -43,9 +44,8 @@ primus.on('connection', function connection(spark) {
   });
 });
 
-//
-// Begin accepting connections.
-//
-server.listen(8080, function listening() {
-  console.log('Open http://localhost:8080 in your browser');
-});
+// 测试 开启异步进程
+//require('./server/child_process/index');
+
+require('./server/booter.js')(server);
+

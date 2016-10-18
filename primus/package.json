@@ -9,6 +9,7 @@
   "author": "Jason Zeng",
   "license": "ISC",
   "dependencies": {
+    "bluebird": "^3.4.6",
     "body-parser": "^1.15.2",
     "express": "^4.14.0",
     "jwt-simple": "^0.5.0",
