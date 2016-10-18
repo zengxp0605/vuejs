@@ -1,4 +1,4 @@
-const Promise = require('bluebird');
+
 const Redis = require('ioredis');
 const conf = require('./config/server.json');
 
@@ -19,8 +19,6 @@ function initRedis() {
     redis.on('ready', function () {
         console.log('Load redis [ok]');
     });
-
-    Promise.promisifyAll(redis);
 
     app.set('redis', redis);
 }
