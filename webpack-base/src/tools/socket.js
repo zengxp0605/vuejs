@@ -60,13 +60,13 @@ function install() {
 
     // 配置服务端返回soket 路由
     _socket.setRouter = (obj, key = config.interactiveKey) => {
-        global.socket.serverAct[key] = obj;
+        //global.socket.serverAct[key] = obj;
     };
 
     _socket.cmd = config.cmd;
 
     // 路由
-    _socket.on('router', function (data) {
+    _socket.on('router2', function (data) {
 
         let ServerAct = global.socket.serverAct;
 
@@ -104,7 +104,8 @@ function install() {
         if ('function' !== typeof clientFun) {
             throw new Error(`ServerAct.${_module[0]}.${_module[1]} 方法未定义.`);
         }
-        clientFun(data.res.content);
+        var errMsg = data.res.msg;
+        clientFun(data.res.content, errMsg);
 
         // }catch(e){
         //     console.error('Error ==>', e);

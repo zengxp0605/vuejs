@@ -1,93 +1,96 @@
 import * as types from '../../libs/constants'
+import { cmd } from '../../config/socket.config';
 
 const state = {
     tableInfo: {},
     users: {},
     isWaiting: false,
-    tablePublicBalls: null,
+    remainPublicBalls: [],
+    userPublicBalls: [],
     isStart: false,
     s_timer: null,
+    roundCount: 0,
+    speakerId: 0,
+    isSpeakerList: {},
 }
 
 const getters = {
-    //tableInfo: (state, getters, rootState) => state.tableInfo,
+    // tableInfo: (state, getters, rootState) => state.tableInfo,
+    isSpeakerList: (state) => {
+        let isSpeakerList = {};
+        for (let id in state.users) {
+            isSpeakerList[id] = state.speakerId == id ? true : false;
+        }
+        return isSpeakerList;
+    },
 
 }
 
 const actions = {
-    [types.ROOM_INTO]: ({ commit }, data) => commit(types.ROOM_INTO, data),
-    [types.TABLE_SET_ROUTER]: ({ commit }) => commit(types.TABLE_SET_ROUTER),
-    [types.USER_BET]: ({ commit }, params) => commit(types.USER_BET, params),
+    [types.ROOM_INTO]: ({ commit }, params) => commit(cmd.emit, { cmd: cmd.roomInto, params }),
+    [types.USER_BET]: ({ commit }, params) => {
+        commit('testTmp');
+        commit(cmd.emit, { cmd: cmd.bet, params })
+    },
 }
 
 const mutations = {
 
-    [types.ROOM_INTO](state, { roomId, userId}) {
-        var params = {
-            uid: userId,
-            roomId: roomId,
-        };
-        global.socket.send(global.socket.cmd.roomInto, params);
+    [cmd.chargeMoney](state, data) {
+        console.log('=========> 兑入:', data.amount);
     },
-
-    [types.USER_BET](state, params) {
-        console.log('========', state.userId);
-
-        global.socket.send(global.socket.cmd.bet, params);
-    },
-
-    [types.TABLE_SET_ROUTER](state) {
-        console.log('room TABLE_SET_ROUTER');
-
-        const serverRouter = {
-            roomInto: function (data) {
-                console.log('=========', data);
-            },
-            chargeMoney: function (data) {
-                console.log('=========> 兑入:', data);
-            },
-            roomShow: function (data) {
-                console.log('=========> roomShow:', JSON.stringify(data, true, ' '));
-                state.isWaiting = data.isWaiting;  // 等候匹配
-                state.users = data.users ? data.users : {};
-                state.tableInfo = data.tableInfo ? data.tableInfo : {};
-                state.tablePublicBalls = data.tableInfo.public_balls;
-                //state.isStart = state.tablePublicBalls.length > 0 ? true : false;
-                console.log('开始倒计时剩余: ', state.tableInfo.secend);
-                if (state.tableInfo.secend > 0) { // 倒计时
-                    state.s_timer = setInterval(function () {
-                        if (state.tableInfo.secend <= 0) {
-                            state.s_timer = null;
-                            clearInterval(state.s_timer);
-                            return;
-                        }
-                        state.tableInfo.secend -= 1;
-                    }, 1000);
-                } else {
-                    state.tableInfo.secend = 0;
+    [cmd.roomShow](state, data) {
+        console.log('=========> roomShow:', JSON.stringify(data, true, ' '));
+        state.isWaiting = data.isWaiting;  // 等候匹配
+        state.users = data.users ? data.users : {};
+        if (data.tableInfo) {
+            state.tableInfo = data.tableInfo;
+            state.remainPublicBalls = data.tableInfo.public_balls;
+            state.roundCount = data.tableInfo.round_count;
+            state.speakerId = data.tableInfo.speaker_uid;
+        }
+        //state.isStart = state.remainPublicBalls.length > 0 ? true : false;
+        console.log('开始倒计时剩余: ', state.tableInfo.secend);
+        if (state.tableInfo.secend > 0) { // 倒计时
+            state.s_timer = setInterval(() => {
+                if (state.tableInfo.secend <= 0) {
+                    state.s_timer = null;
+                    clearInterval(state.s_timer);
+                    return;
                 }
-            },
-            gameStart: function (data) {
-                console.log('=========> gameStart:', JSON.stringify(data, true, ' '));
-                state.tablePublicBalls = data.tableInfo.public_balls;
-                state.users = data.users;
-                state.isStart = true;
-            },
-            bet: function (data) {
-                console.log('=========> bet:', JSON.stringify(data, true, ' '));
-            },
-            play: function (data) {
-                console.log('=========> play:', JSON.stringify(data, true, ' '));
-                var speakerId = data.speakerId;
-                state.users[speakerId].isSpeaker = true;
-            },
-            gameOver: function (data) {
-                console.log('=========> gameOver:', JSON.stringify(data, true, ' '));
-                
-            },
-        };
-        global.socket.setRouter(serverRouter);
-    }
+                state.tableInfo.secend -= 1;
+            }, 1000);
+        } else {
+            state.tableInfo.secend = 0;
+        }
+    },
+    [cmd.gameStart](state, data) {
+        console.log('=========> gameStart:', JSON.stringify(data, true, ' '));
+        state.remainPublicBalls = data.tableInfo.public_balls;
+        state.users = data.users;
+        state.isStart = true;
+    },
+    [cmd.bet](state, data) {
+
+        console.log('=========> bet:', state.userId, JSON.stringify(data, true, ' '));
+        let actUserId = data.uid || 0;
+        if (data.remainPublicBalls) {
+            state.remainPublicBalls = data.remainPublicBalls;
+        }
+        if (data.userPublicBalls) {
+            state.users[actUserId].public_balls = data.userPublicBalls + '';
+            state.users[actUserId].public_point = data.userPublicBalls.reduce((m, n) => Number(m) + Number(n));
+        }
+    },
+    [cmd.play](state, data) {
+        console.log('=========> play:', JSON.stringify(data, true, ' '));
+        state.roundCount = data.roundCount;
+        state.speakerId = data.speakerId;
+    },
+    [cmd.gameOver](state, data) {
+        console.log('=========> gameOver:', JSON.stringify(data, true, ' '));
+
+    },
 
 }
 

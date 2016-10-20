@@ -1,21 +1,68 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <title>Vue.js demo0</title>
-    <script src="../vue-2.0.1.js"></script>
-  </head>
-  <body>
-    <div id="app">
-      <p>{{ message }}</p>
-      <input v-model="message">
-    </div>
-    <script>
+
+<head>
+	<title>Vue.js demo0</title>
+	<script src="../vue-2.0.1.js"></script>
+	<style>
+		.active {
+			background-color: red;
+		}
+		
+		.oper-bar li {
+			margin-top: 10px;
+		}
+	</style>
+</head>
+
+<body>
+	<div id="app">
+		<p>{{ message }}</p>
+		<input v-model="message">
+		<ul class="oper-bar">
+			<li v-for="i in arr" :class="{ active: activeList[i] }">{{ i }}</li>
+		</ul>
+	</div>
+	<script>
       new Vue({
         el: '#app',
         data: {
-          message: 'Hello Vue.js!'
+          message: 'Hello World!',
+          arr: [1,2,3],
+          current: 1,
+          activeList: {
+         
+          },
+        },
+        created: function(){
+           console.log('created');
+           this.init();
+        },
+        computed: {
+          activeList () {
+              let activeList = {};
+              this.arr.map(i => {
+                activeList[i] = this.current == i ? true : false;
+              });
+              console.log('activeList',this.current);
+              return activeList;
+          },
+        },
+        methods:{
+            init(){
+              console.log('init...');
+              setInterval(()=>{
+                this.current = (() => { 
+                  let randIdx = parseInt(Math.random() * this.arr.length);
+                  return this.arr[randIdx];
+                })();
+                console.log('setInterval', this.current);
+              }, 10000);
+            },
+            
         }
       });
     </script>
-  </body>
+</body>
+
 </html>
