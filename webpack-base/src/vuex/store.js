@@ -61,5 +61,5 @@ export default new Vuex.Store({
         table,
     },
     plugins: [socketio()],
-    strict: true,
+    //strict: true,
 })

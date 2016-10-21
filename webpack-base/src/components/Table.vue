@@ -8,7 +8,7 @@
 			<table>
 				<tr>
 					<td>tableId: </td>
-					<td>{{ $store.state.table.tableInfo.tid }}</td>
+					<td>{{ $store.state.table.tableId }}</td>
 					<td>secend: </td>
 					<td>{{ $store.state.table.tableInfo.secend }}</td>
 				</tr>
@@ -21,6 +21,13 @@
 				<tr>
 					<td>轮次: </td>
 					<td>{{ $store.state.table.roundCount }} / {{ $store.state.table.tableInfo.total_round }}</td>
+				</tr>
+				<tr>
+					<td>奖池: </td>
+					<td>
+						<span>总: {{ $store.state.table.tableInfo.main_amount }}</span>
+						<span>边: {{ $store.state.table.tableInfo.side_amount }}</span>
+					</td>
 				</tr>
 				<tr>
 					<td>users:</td>
@@ -50,7 +57,7 @@
 									<td>{{ user.private_point }} </td>
 									<td>{{ user.public_balls }} </td>
 									<td>{{ user.public_point }} </td>
-									<td>{{ parseInt(user.public_point) + (user.private_point ? parseInt(user.private_point) : 0) }} </td>
+									<td>{{ toNumber(user.public_point) + toNumber(user.private_point) }} </td>
 									<td>{{ user.bet_amount }} </td>
 								</tr>
 							</template>
@@ -118,6 +125,9 @@ export default {
 	changeAmount(a){
 		this.amount = a;
 	},
+	toNumber(s){
+		return s ? parseInt(s) : 0;
+	}
   }
 
 }

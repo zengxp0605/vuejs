@@ -28,19 +28,16 @@ export default function createWebSocketPlugin() {
         })
         store.subscribe(mutation => {
             //console.log('=========socket mutation', mutation.type);
-
+            // socket 向服务端发送命令
             if (mutation.type === config.cmd.emit) {
                 //console.log('mutation.payload:', mutation, mutation.payload);
-                // socket.emit('update', mutation.payload)
                 let { cmd, params } = mutation.payload;
                 var data = {
                     cmd: cmd,
                     params: params,
                 };
                 var logStr = '客户端发送: ' + JSON.stringify(data);
-                //console.log(logStr);
                 store.dispatch('appendLog', logStr);
-
                 socket.emit('router', data);
             }
         })

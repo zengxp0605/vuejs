@@ -2,6 +2,7 @@ import * as types from '../../libs/constants'
 import { cmd } from '../../config/socket.config';
 
 const state = {
+    tableId: '',
     tableInfo: {},
     users: {},
     isWaiting: false,
@@ -32,6 +33,10 @@ const actions = {
         commit('testTmp');
         commit(cmd.emit, { cmd: cmd.bet, params })
     },
+    s_timer: ({ commit }, params) => {
+        console.log('s_timer');
+
+    },
 }
 
 const mutations = {
@@ -39,6 +44,7 @@ const mutations = {
     [cmd.chargeMoney](state, data) {
         console.log('=========> 兑入:', data.amount);
     },
+
     [cmd.roomShow](state, data) {
         console.log('=========> roomShow:', JSON.stringify(data, true, ' '));
         state.isWaiting = data.isWaiting;  // 等候匹配
@@ -51,6 +57,7 @@ const mutations = {
         }
         //state.isStart = state.remainPublicBalls.length > 0 ? true : false;
         console.log('开始倒计时剩余: ', state.tableInfo.secend);
+        actions.s_timer('s_timer');
         if (state.tableInfo.secend > 0) { // 倒计时
             state.s_timer = setInterval(() => {
                 if (state.tableInfo.secend <= 0) {
@@ -63,15 +70,18 @@ const mutations = {
         } else {
             state.tableInfo.secend = 0;
         }
+        state.tableId = state.tableInfo.tid;
     },
+
     [cmd.gameStart](state, data) {
         console.log('=========> gameStart:', JSON.stringify(data, true, ' '));
         state.remainPublicBalls = data.tableInfo.public_balls;
         state.users = data.users;
+        state.tableInfo = data.tableInfo;
         state.isStart = true;
     },
-    [cmd.bet](state, data) {
 
+    [cmd.bet](state, data) {
         console.log('=========> bet:', state.userId, JSON.stringify(data, true, ' '));
         let actUserId = data.uid || 0;
         if (data.remainPublicBalls) {
@@ -81,12 +91,34 @@ const mutations = {
             state.users[actUserId].public_balls = data.userPublicBalls + '';
             state.users[actUserId].public_point = data.userPublicBalls.reduce((m, n) => Number(m) + Number(n));
         }
+        data.betAmount && (state.users[actUserId].bet_amount = data.betAmount);
+        data.userNewAmount && (state.users[actUserId].amount = data.userNewAmount);
+
+        if (data.mainAmount) {
+            console.log('bet => 更新总池金额', data.mainAmount);
+            state.tableInfo.main_amount = data.mainAmount;
+        }
+        if (data.sideAmount) {
+            console.log('bet => 更新边池金额', data.sideAmount);
+            state.tableInfo.side_amount = data.sideAmount;
+        }
+        // 首次押注
+        if (data.isFirst) {
+            // 更新余额和押注金额
+            for (let uid in data.usersNewAmount) {
+                state.users[uid].amount = data.usersNewAmount[uid];
+                state.users[uid].bet_amount = data.betAmount;
+            }
+            state.tableInfo.main_amount = data.mainAmount;
+        }
     },
+
     [cmd.play](state, data) {
         console.log('=========> play:', JSON.stringify(data, true, ' '));
         state.roundCount = data.roundCount;
         state.speakerId = data.speakerId;
     },
+
     [cmd.gameOver](state, data) {
         console.log('=========> gameOver:', JSON.stringify(data, true, ' '));
 
