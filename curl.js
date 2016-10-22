@@ -5,14 +5,14 @@ var request = require('superagent'),
     Server_Session;
 
 connector.test = function() {
-    var url = 'http://yx32-admin.stg2.24cp.com/?act=runfast_room&st=main&action=main&id=&page=1&rows=3';
+    var url = '';
     var data = {
         rows: 3
     };
     request
         .post(url)
         .set('Content-Type', 'application/json')
-        .set('Cookie', 'YOUXIADMINSID=495f16727621c615c2ca97940e239b02344c9e27')
+        .set('Cookie', 'SID=test')
         .send(data)
         .end(function(err, resp) {
             console.log(err, resp.body);
@@ -28,7 +28,7 @@ connector.baidu = function() {
 
   var url = 'https://passport.baidu.com/center';
    
-   var _cookieStr = 'BAIDUID=4FFE2A8BB9E79D74FEFD070D3D99900D:FG=1;BDUSS=VpQXhWdkJQck9DSEozS2VraGxYTDBVU09RVDNEYkdNWTk0YTV0QnJmRWxjU2hZSVFBQUFBJCQAAAAAAAAAAAEAAAAYWc4jemVuZ3hwMDYwNQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACXkAFgl5ABYVl;HOSUPPORT=1;Hm_lpvt_90056b3f84f90da57dc0f40150f005d5=1476453515;Hm_lvt_90056b3f84f90da57dc0f40150f005d5=1476453507,1476453515;PTOKEN=da84e6fb6755d8e0a08983fad1a013e1;STOKEN=bb0ba3d90bfbf3dc6e4605f9aa2b5ff0af16eb1e5ab08070cc8ce1e28226f490; ';
+   var _cookieStr = 'BAIDUID=Hm_lvt_90056b3f84f90da57dc0f40150f005d5=1476453507,1476453515;PTOKEN=da84e6fb6755d8e0a08983fad1a013e1;STOKEN=bb0ba3d90bfbf3dc6e4605f9aa2b5ff0af16eb1e5ab08070cc8ce1e28226f490; ';
     request
       .get(url)
       .set('Cookie', _cookieStr)

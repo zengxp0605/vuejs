@@ -1,0 +1,22 @@
+{
+  "name": "server",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Jason Zeng",
+  "license": "ISC",
+  "dependencies": {
+    "bluebird": "^3.4.6",
+    "body-parser": "^1.15.2",
+    "express": "^4.14.0",
+    "ioredis": "^2.4.0",
+    "jwt-simple": "^0.5.0",
+    "primus": "^6.0.3",
+    "pwd": "^1.1.0",
+    "ws": "^1.1.1",
+    "xml2js": "^0.4.17"
+  }
+}
