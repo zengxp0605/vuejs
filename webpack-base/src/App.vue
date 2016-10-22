@@ -43,7 +43,7 @@ export default {
   
   #app {
     color: #2c3e50;
-    margin-top: 50px;
+    margin-top: 10px;
     /*max-width: 600px;
   text-align: center;*/
     font-family: Source Sans Pro, Helvetica, sans-serif;
@@ -61,6 +61,10 @@ export default {
   
   .mt50 {
     margin-top: 50px;
+  }
+  
+  .mt10 {
+    margin-top: 10px;
   }
   
   .hide {

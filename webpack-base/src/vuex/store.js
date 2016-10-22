@@ -3,9 +3,12 @@ import Vuex from 'vuex'
 import room from './modules/room'
 import table from './modules/table'
 import * as types from '../libs/constants'
+import socketio from '../plugins/socket';
+import { cmd } from '../config/socket.config';
 
 const state = {
-    userId: '',
+    userId: 0,
+    tmp: 'tmp',
     logs: [],
 }
 
@@ -19,11 +22,16 @@ const actions = {
     emptyLog: ({ commit }) => {
         commit('emptyLog');
     },
+
+    [cmd.emit]: ({ commit }, data) => {
+        commit(cmd.emit, data);
+    },
 }
 
 const mutations = {
     [types.UPDATE_USER_ID](state, userId) {
         state.userId = userId;
+        state.tmp = new Date().getTime();
         console.log('root state updateUserId', userId);
     },
     appendLog(state, logStr) {
@@ -32,8 +40,13 @@ const mutations = {
     emptyLog(state) {
         state.logs = [];
     },
-}
 
+    testTmp(state) {
+        state.tmp = new Date().getTime();
+    },
+    
+    [cmd.emit](state) { },
+}
 
 Vue.use(Vuex)
 
@@ -46,5 +59,7 @@ export default new Vuex.Store({
     modules: {
         room,
         table,
-    }
+    },
+    plugins: [socketio()],
+    //strict: true,
 })

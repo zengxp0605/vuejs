@@ -4,7 +4,7 @@ import VueRouter from 'vue-router'
 import App from './App'
 import routes from './routers'
 import store from './vuex/store'
-require('./tools/socket');
+// require('./tools/socket');
 
 Vue.use(VueRouter)
 //Vue.use(VueResource)

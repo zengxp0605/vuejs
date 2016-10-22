@@ -4,20 +4,31 @@ var request = require('superagent'),
     baseURL = 'http://localhost:8080/Server/rest/',
     Server_Session;
 
-connector.test = function() {
-    var url = '';
+connector.test = function () {
+    var url = 'http://test.com';
     var data = {
-        rows: 3
+        username: 'test',
+        password: 'test',
+        image_code: '',
     };
     request
         .post(url)
-        .set('Content-Type', 'application/json')
-        .set('Cookie', 'SID=test')
+        .type('form') // josn || form
+        // .set('Content-Type', 'application/json')
+        // .set('Content-Type', 'application/x-www-form-urlencoded')
+        //.set('Cookie', 'SID=test')
         .send(data)
-        .end(function(err, resp) {
-            console.log(err, resp.body);
+        .query({
+            act: 'index',
+            st: 'login',
+        })
+        .end(function (err, resp) {
+            console.log(err, resp);
+            console.log(err, resp.text, JSON.parse(resp.text));
+
         });
 }
+connector.test();
 
 //connector.test();
 
@@ -79,11 +90,11 @@ function writeLog(msg, type = 'error'){
   });
 }
 
-connector.EstablishSession = function() {
+connector.EstablishSession = function () {
     var url = baseURL + 'session/establish';
     request
         .post(url)
-        .end(function(err, resp) {
+        .end(function (err, resp) {
             if (err) {
                 console.log(err);
             }
@@ -94,13 +105,13 @@ connector.EstablishSession = function() {
         });
 };
 
-connector.Post = function(url, obj, fn) {
+connector.Post = function (url, obj, fn) {
     request
         .post(baseURL + url)
         .set('Content-Type', 'application/json')
         .set('Cookie', 'SESSIONID=' + Server_Session)
         .send(obj)
-        .end(function(err, resp) {
+        .end(function (err, resp) {
             fn(err, resp, resp.body);
         });
 };
