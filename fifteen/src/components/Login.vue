@@ -1,13 +1,17 @@
 <template>
-  <div>
-    <h1>登陆</h1>
-    <p>{{ $store.state.userId }}</p>
-    <p>
-      <span>userId: </span>
-      <input type="text" v-model="$store.state.userId">
-      <button v-on:click="login">登陆</button>
-    </p>
-  </div>
+	<div class="container">
+		<h1>登陆</h1>
+		<p>{{ $store.state.userId }}</p>
+
+		<form class="form-inline" role="form">
+			<div class="form-group">
+				<label class="sr-only">用户ID</label>
+				<input type="text" class="form-control" placeholder="请输入用户ID" v-model="$store.state.userId">
+			</div>
+			<button v-on:click="login" class="btn btn-default">登陆</button>
+		</form>
+
+	</div>
 </template>
 
 <script>
@@ -26,9 +30,8 @@ export default {
 }
 </script>
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-  h1 {
-    color: #42b983;
-  }
+	h1 {
+		color: #42b983;
+	}
 </style>

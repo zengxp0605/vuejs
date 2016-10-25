@@ -13,6 +13,7 @@ const state = {
     roundCount: 0,
     speakerId: 0,
     isSpeakerList: {},
+    minBetAmount: 0, // 最小押注额
 }
 
 const getters = {
@@ -22,9 +23,16 @@ const getters = {
         for (let id in state.users) {
             isSpeakerList[id] = state.speakerId == id ? true : false;
         }
+        if (state.speakerId == state.userId) {
+            document.title = 'spreaker';
+        } else {
+            document.title = '火拼15球'
+        }
         return isSpeakerList;
     },
-
+    betList(state) {
+        return (state.tableInfo.bet_list + '').split(',');
+    }
 }
 
 const actions = {
@@ -71,6 +79,8 @@ const mutations = {
             state.tableInfo.secend = 0;
         }
         state.tableId = state.tableInfo.tid;
+        state.minBetAmount = state.tableInfo.last_bet_amount;
+
     },
 
     [cmd.gameStart](state, data) {
@@ -83,16 +93,10 @@ const mutations = {
 
     [cmd.bet](state, data) {
         console.log('=========> bet:', state.userId, JSON.stringify(data, true, ' '));
-        let actUserId = data.uid || 0;
         if (data.remainPublicBalls) {
             state.remainPublicBalls = data.remainPublicBalls;
         }
-        if (data.userPublicBalls) {
-            state.users[actUserId].public_balls = data.userPublicBalls + '';
-            state.users[actUserId].public_point = data.userPublicBalls.reduce((m, n) => Number(m) + Number(n));
-        }
-        data.betAmount && (state.users[actUserId].bet_amount = data.betAmount);
-        data.userNewAmount && (state.users[actUserId].amount = data.userNewAmount);
+
 
         if (data.mainAmount) {
             console.log('bet => 更新总池金额', data.mainAmount);
@@ -110,13 +114,25 @@ const mutations = {
                 state.users[uid].bet_amount = data.betAmount;
             }
             state.tableInfo.main_amount = data.mainAmount;
+        } else {
+            let actUserId = data.uid || 0;
+            if (data.userPublicBalls) {
+                state.users[actUserId].public_balls = data.userPublicBalls + '';
+                state.users[actUserId].public_point = data.userPublicBalls.reduce((m, n) => Number(m) + Number(n));
+            }
+            state.users[actUserId].bet_amount = data.betAmount;
+            state.users[actUserId].amount = data.userNewAmount;
         }
+
+        state.minBetAmount = data.betAmount;
     },
 
     [cmd.play](state, data) {
-        console.log('=========> play:', JSON.stringify(data, true, ' '));
+        console.log('=========> play:', state.userId, JSON.stringify(data, true, ' '));
         state.roundCount = data.roundCount;
         state.speakerId = data.speakerId;
+
+
     },
 
     [cmd.gameOver](state, data) {

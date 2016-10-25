@@ -20,7 +20,9 @@ export default function createWebSocketPlugin() {
                 return;
             }
             if (data.code == '-1' || data.res.code == '-1') {
-                console.log(data.res.msg ? data.res.msg : '未知错误!');
+                let msg = data.res.msg || '未知错误!';
+                console.log(msg);
+                Tools.warn(msg);
                 return;
             }
 

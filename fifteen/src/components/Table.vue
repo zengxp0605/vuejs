@@ -1,88 +1,130 @@
 <template>
-	<div class="table">
-		<h4>userId: {{ $store.state.userId }} roomId: {{ $route.params.roomId }} tmp: {{ $store.state.tmp }}
-		</h4>
+	<div class="container">
+		<div class="row">
+			<div class="col-md-10">
+				<h4>userId: {{ $store.state.userId }} roomId: {{ $route.params.roomId }} time: {{ $store.state.tmp }}
+			</div>
+		</div>
 
-		<div class="color-red" v-show="$store.state.table.isWaiting">等候匹配....</div>
-		<div v-show="!$store.state.table.isWaiting">
-			<table>
-				<tr>
-					<td>tableId: </td>
-					<td>{{ $store.state.table.tableId }}</td>
-					<td>secend: </td>
-					<td>{{ $store.state.table.tableInfo.secend }}</td>
-				</tr>
-				<tr>
-					<td>Balls: </td>
-					<td>{{ $store.state.table.remainPublicBalls }}</td>
-					<td>状态: </td>
-					<td v-if="$store.state.table.isStart">游戏开始</td>
-				</tr>
-				<tr>
-					<td>轮次: </td>
-					<td>{{ $store.state.table.roundCount }} / {{ $store.state.table.tableInfo.total_round }}</td>
-				</tr>
-				<tr>
-					<td>奖池: </td>
-					<td>
-						<span>总: {{ $store.state.table.tableInfo.main_amount }}</span>
-						<span>边: {{ $store.state.table.tableInfo.side_amount }}</span>
-					</td>
-				</tr>
-				<tr>
-					<td>users:</td>
-					<td>
-						<table>
+		<div class="row">
+			<div class="col-md-12">
+				<h3 class="bg-primary text-center" v-show="$store.state.table.isWaiting">等候匹配....</h3>
+			</div>
+		</div>
+
+		<section v-show="!$store.state.table.isWaiting">
+			<div class="row">
+				<div class="col-md-12">
+					<table class="table">
+						<caption><strong>桌子情况</strong></caption>
+						<tbody>
 							<tr>
-								<td>userId</td>
-								<td>uname</td>
-								<td>game_status</td>
-								<td>seat_id</td>
-								<td>amount</td>
-								<td>sit_time</td>
-								<td>private_point</td>
-								<td>public_balls</td>
-								<td>publicTotal</td>
-								<td>total</td>
-								<td>bet_amount</td>
+								<td>tableId: </td>
+								<td>{{ $store.state.table.tableId }}</td>
+								<td>secend: 　{{ $store.state.table.tableInfo.secend }}</td>
 							</tr>
+							<tr>
+								<td>公共球: </td>
+								<td colspan="2">{{ $store.state.table.remainPublicBalls }}</td>
+								<!--<td>状态: </td>
+								<td v-if="$store.state.table.isStart">游戏开始</td>-->
+							</tr>
+							<tr>
+								<td>轮次: </td>
+								<td>{{ $store.state.table.roundCount || 0 }} / {{ $store.state.table.tableInfo.total_round }}</td>
+							</tr>
+							<tr>
+								<td>奖池: </td>
+								<td colspan="2">
+									<span>总: {{ $store.state.table.tableInfo.main_amount }}</span>
+									<span>边: {{ $store.state.table.tableInfo.side_amount }}</span>
+								</td>
+							</tr>
+
+						</tbody>
+					</table>
+				</div>
+			</div>
+
+			<div class="row">
+				<div class="col-md-12">
+					<table class="table table-bordered">
+						<caption><strong>用户列表</strong></caption>
+						<thead>
+							<tr>
+								<th>userId</th>
+								<th>uname</th>
+								<th>game<br>status</th>
+								<th>seat_id</th>
+								<th>amount</th>
+								<th>private<br>point</th>
+								<th>public<br>balls</th>
+								<th>publicTotal</th>
+								<th>total</th>
+								<th>bet_amount</th>
+								<!--<th>sit_time</th>-->
+							</tr>
+						</thead>
+						<tbody>
 							<template v-for="(user, id) in $store.state.table.users">
-								<tr :class="id == $route.params.userId ? 'my-bgc' : ''">
-									<td :class="{ active: isSpeakerList[id] }">{{ id }} </td>
+								<tr :class="id == $route.params.userId ? 'bg-info' : ''">
+									<td :class="{ 'bg-danger': isSpeakerList[id] }">{{ id }} </td>
 									<td>{{ user.uname }} </td>
 									<td>{{ user.game_status}}</td>
 									<td>{{ user.seat_id }} </td>
 									<td>{{ user.amount }} </td>
-									<td>{{ user.sit_time }} </td>
 									<td>{{ user.private_point }} </td>
 									<td>{{ user.public_balls }} </td>
 									<td>{{ user.public_point }} </td>
 									<td>{{ toNumber(user.public_point) + toNumber(user.private_point) }} </td>
 									<td>{{ user.bet_amount }} </td>
+									<!--<td>{{ user.sit_time }} </td>-->
 								</tr>
 							</template>
-						</table>
-					</td>
-				</tr>
-			</table>
-
-			<div class="mt10">
-				<label for="amount">押注:</label><input type="text" id="amount" v-model="amount">
+						</tbody>
+					</table>
+				</div>
 			</div>
 
-			<div class="oper-bar">
-				<button v-on:click="bet({isGiveUp: 1})">放弃</button>
-				<button v-on:click="bet({isNeedBall: 1})">要球</button>
-				<button v-on:click="bet({isNeedBall: 0})">不要求</button>
-				<button v-on:click="bet({isAllIn: 1})">Allin</button>
+			<div class="row">
+				<div class="col-md-12">
+					<!--<div class="panel panel-info">-->
+					<div class="panel panel-default">
+						<div class="panel-heading">
+							<form class="form-inline" role="form">
+								<div class="form-group">
+									<label>最小押注:　</label>
+									<input type="text" class="form-control" readonly v-model="$store.state.table.minBetAmount">
+								</div>
 
-				<br/> <br/>
-				<button v-on:click="changeAmount(100)">加到100</button>
-				<button v-on:click="changeAmount(200)">加到200</button>
-				<button v-on:click="changeAmount(500)">加到500</button>
+								<div class="form-group">
+									<label for="amount">我要押注:　</label>
+									<input type="text" class="form-control" id="amount" v-model="amount">
+								</div>
+							</form>
+						</div>
 
+						<div class="panel-body">
+							<div class="col-md-4">
+								<button class="btn btn-default" v-on:click="bet({isGiveUp: 1})">放弃</button>
+								<button class="btn btn-primary" v-on:click="bet({isNeedBall: 1})">要球</button>
+								<button class="btn btn-warning" v-on:click="bet({isNeedBall: 0})">不要球</button>
+								<button class="btn btn-default" v-on:click="bet({isAllIn: 1})">Allin</button>
+							</div>
+
+							<div class="col-md-8">
+								<div class="btn-group">
+									<template v-for="a in betList">
+										<button class="btn btn-default" v-on:click="changeAmount(a)">加到{{ a }}</button>
+									</template>
+								</div>
+							</div>
+
+						</div>
+					</div>
+				</div>
 			</div>
-		</div>
+		</section>
 
 	</div>
 </template>
@@ -108,6 +150,7 @@ export default {
   },
   computed: mapGetters([
      'isSpeakerList',
+	 'betList',
    ]),
   methods: {
     ...mapActions([
@@ -133,8 +176,8 @@ export default {
 }
 
 </script>
-
-<style>
+<!--
+<style scoped>
 	button {
 		padding: 2px;
 		cursor: pointer;
@@ -176,4 +219,4 @@ export default {
 	.oper-bar {
 		margin-top: 15px;
 	}
-</style>
+</style>-->

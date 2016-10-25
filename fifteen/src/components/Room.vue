@@ -1,15 +1,42 @@
 <template>
-	<div class="rooms">
-		<p>uid: {{ $route.params.userId }} -- {{ testCount }}</p>
-		<div v-for="(room,key) in $store.state.room.roomList">
-
-			<router-link :to="{ name: 'table', params: { userId: $route.params.userId,roomId: key }}">
-				{{ roomNames[key] }}
-			</router-link>
-			<span>{{ room }}</span><br />
+	<div class="container">
+		<div class="row">
+			<div class="col-md-10">
+				<h4>uid: {{ $route.params.userId }} -- {{ testCount }}</h4>
+			</div>
 		</div>
 
-		<button @click="test">test</button>
+
+		<div class="row">
+			<div class="col-md-12">
+				<table class="table table-bordered">
+					<caption>房间列表</caption>
+					<thead>
+						<tr>
+							<th>房间</th>
+							<th>详情</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr v-for="(room,key) in $store.state.room.roomList">
+							<td>
+								<router-link :to="{ name: 'table', params: { userId: $route.params.userId,roomId: key }}">
+									{{ roomNames[key] }}
+								</router-link>
+							</td>
+							<td>{{ room }}</td>
+						</tr>
+
+					</tbody>
+				</table>
+			</div>
+		</div>
+
+		<div class="row">
+			<div class="col-md-12">
+				<button type="button" class="btn btn-default" @click="test">test</button>
+			</div>
+		</div>
 
 	</div>
 </template>

@@ -1,12 +1,18 @@
 <template>
-    <div id="logs-container">
-        <button v-on:click="emptyLog" style="margin-top: 20px;">清除日志</button>
-        <div id="logs">
-            <div class="log-server" v-for="str in $store.state.logs">
-                {{ str }}
-            </div>
-        </div>
-    </div>
+	<div class="container mt50">
+		<div class="panel panel-default">
+			<div class="panel-heading">
+				<button type="button" class="btn btn-default" v-on:click="emptyLog">清除日志</button>
+			</div>
+
+			<div class="panel-body">
+				<p class="bg-info" v-for="str in $store.state.logs">
+					{{ str }}
+				</p>
+			</div>
+		</div>
+
+	</div>
 </template>
 
 <script>
@@ -20,23 +26,3 @@ export default {
 }
 
 </script>
-
-<style>
-    #logs {
-        margin-top: 10px;
-        border: 1px solid #d3d3d3;
-        min-height: 200px;
-    }
-    
-    #logs .log-client {
-        background-color: #fff;
-        border-bottom: 1px solid #fff;
-        margin-top: 5px;
-    }
-    
-    #logs .log-server {
-        background-color: #eee;
-        border-bottom: 1px solid #fff;
-        margin-top: 5px;
-    }
-</style>
