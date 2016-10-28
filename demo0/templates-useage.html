@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="UTF-8">
+	<title>Component Useage</title>
+</head>
+
+<body>
+	<div id="app">
+		<my-component></my-component>
+
+		<my-script-component></my-script-component>
+	</div>
+
+	<template id="myComponent1">
+		<div>This is a component!</div>
+	</template>
+
+	<script type="text/template" id="myScriptComponent">
+        <div style="color: red;">This is a component use script tag!</div>
+    </script>
+
+</body>
+<script src="../vue-2.0.1.js"></script>
+<script>
+		
+    let Component1 =Vue.component('my-component',{
+        template: '#myComponent1'
+    });
+
+    let Component2 = Vue.component('my-script-component',{
+        template: '#myScriptComponent'
+    });
+
+    new Vue({
+        el: '#app'
+    });
+		
+</script>
+
+</html>

@@ -34,6 +34,7 @@
 
 		<div class="row">
 			<div class="col-md-12">
+				<button type="button" class="btn btn-default" @click="quickInto">快速入座</button>
 				<button type="button" class="btn btn-default" @click="test">test</button>
 			</div>
 		</div>
@@ -42,31 +43,49 @@
 </template>
 
 <script>
+import Vue from 'vue'
 import { mapGetters, mapActions } from 'vuex'
 import * as types from '../libs/constants'
+import { cmd } from '../config/socket.config';
 
 export default {
     data (){
         return {
             roomNames: {
-                1: '初级房',
-                2: '中级房',
-                3: '高级房',
+                1: '新手场',
+                2: '普通场',
+                3: '高级场',
+                4: '大师场',
             }
         }
     },
     created: function() {
-        console.log('room created');
+        console.log('room created', this.$router, Vue.router, Vue);
 
         this[types.ROOM_FETCH_LIST]();
+		//this.$store.dispatch(types.ROOM_FETCH_LIST, {});
+		this.$store.dispatch('checkGameStatus', {uid:  this.$route.params.userId });
+
+		//this.$store.dispatch('dispatchTest1', {test1: '--dispatch--'});
+		//this.$store.commit('commitTest2', {test2: '--commit--'});
     },
     computed: mapGetters([
         'testCount',
     ]),
-    methods: mapActions([
+    methods: {
+		...mapActions([
             types.ROOM_FETCH_LIST,
             'test',
-    ]),
+    	]),
+		quickInto(){
+			this.$store.dispatch(cmd.emit , {
+				cmd: cmd.quickInto,
+				params:{
+					uid: this.$route.params.userId,
+				}
+			});
+		}
+	}
   }
 
 </script>

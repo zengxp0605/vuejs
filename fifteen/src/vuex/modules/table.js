@@ -1,4 +1,6 @@
+import Vue from 'vue'
 import * as types from '../../libs/constants'
+import Tools from '../../tools/index'
 import { cmd } from '../../config/socket.config';
 
 const state = {
@@ -36,25 +38,36 @@ const getters = {
 }
 
 const actions = {
-    [types.ROOM_INTO]: ({ commit }, params) => commit(cmd.emit, { cmd: cmd.roomInto, params }),
-    [types.USER_BET]: ({ commit }, params) => {
+    // [types.ROOM_INTO]: ({ commit }, params) => commit(cmd.emit, { cmd: cmd.roomInto, params }),
+    [types.USER_BET]: ({ commit, state }, params) => {
         commit('testTmp');
+        if (params.betAmount < state.minBetAmount) {
+            Tools.warn('押注金额不能小于最低押注额:' + state.minBetAmount);
+            return;
+        }
         commit(cmd.emit, { cmd: cmd.bet, params })
     },
     s_timer: ({ commit }, params) => {
         console.log('s_timer');
 
     },
+
+    [cmd.chargeMoney]({ commit, state }, data) {
+        console.log('actions=========> 兑入:', data.amount);
+    },
+    [cmd.roomShow]({ commit, state}, data) {
+        // TODO:  切换路由
+        console.log(`actions==> ${cmd.roomShow}`, Vue.$router, Vue);
+        commit(cmd.roomShow, data);
+    },
+
 }
 
 const mutations = {
 
-    [cmd.chargeMoney](state, data) {
-        console.log('=========> 兑入:', data.amount);
-    },
-
     [cmd.roomShow](state, data) {
-        console.log('=========> roomShow:', JSON.stringify(data, true, ' '));
+        console.log('=========> roomShow:', JSON.stringify(data));
+        // console.log('test-http', this.$http);
         state.isWaiting = data.isWaiting;  // 等候匹配
         state.users = data.users ? data.users : {};
         if (data.tableInfo) {

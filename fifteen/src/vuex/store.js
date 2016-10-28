@@ -4,7 +4,7 @@ import room from './modules/room'
 import table from './modules/table'
 import * as types from '../libs/constants'
 import socketio from '../plugins/socket';
-import { cmd } from '../config/socket.config';
+import { cmd, EMIT_FLAG } from '../config/socket.config';
 
 const state = {
     userId: 0,
@@ -23,9 +23,10 @@ const actions = {
         commit('emptyLog');
     },
 
-    [cmd.emit]: ({ commit }, data) => {
-        commit(cmd.emit, data);
-    },
+    // [EMIT_FLAG]: ({ commit }, data) => {
+    //     // console.log('-------------actions', EMIT_FLAG);
+    //     commit(EMIT_FLAG, data);
+    // },
 }
 
 const mutations = {
@@ -44,8 +45,8 @@ const mutations = {
     testTmp(state) {
         state.tmp = new Date().getTime();
     },
-    
-    [cmd.emit](state) { },
+
+    [EMIT_FLAG](state) { },
 }
 
 Vue.use(Vuex)

@@ -8,11 +8,14 @@ const config = {
 
 const interactiveKey = 'interactive';
 
+export const EMIT_FLAG = 'socketEmit';
+
 export const cmd = {
-    emit: 'socketEmit',
     error: `${interactiveKey}::error`,
     roomList: `${interactiveKey}::roomList`,
+    checkGameStatus: `${interactiveKey}::checkGameStatus`,
     roomInto: `${interactiveKey}::roomInto`,
+    quickInto: `${interactiveKey}::quickInto`,
     test: `${interactiveKey}::test`,
     bet: `${interactiveKey}::bet`,
     gameOver: `${interactiveKey}::gameOver`,
@@ -23,5 +26,6 @@ export const cmd = {
 }
 
 config.cmd = cmd;
+config.EMIT_FLAG = EMIT_FLAG;
 
 export default config

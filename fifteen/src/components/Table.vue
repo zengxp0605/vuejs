@@ -72,7 +72,7 @@
 									<td>{{ user.uname }} </td>
 									<td>{{ user.game_status}}</td>
 									<td>{{ user.seat_id }} </td>
-									<td>{{ user.amount }} </td>
+									<td>{{ user.amount || 0 }} </td>
 									<td>{{ user.private_point }} </td>
 									<td>{{ user.public_balls }} </td>
 									<td>{{ user.public_point }} </td>
@@ -145,6 +145,8 @@ export default {
             uid: this.$route.params.userId,
             roomId: this.$route.params.roomId,
       });
+     
+	 //console.log('this.$http',  this.$http, this.$http.get);
 
       this[types.UPDATE_USER_ID](this.$route.params.userId);
   },
