@@ -46,7 +46,7 @@
 import Vue from 'vue'
 import { mapGetters, mapActions } from 'vuex'
 import * as types from '../libs/constants'
-import { cmd } from '../config/socket.config';
+import { cmd,EMIT_FLAG } from '../config/socket.config';
 
 export default {
     data (){
@@ -60,7 +60,7 @@ export default {
         }
     },
     created: function() {
-        console.log('room created', this.$router, Vue.router, Vue);
+        console.log('room created', this.$router, Vue.$router);
 
         this[types.ROOM_FETCH_LIST]();
 		//this.$store.dispatch(types.ROOM_FETCH_LIST, {});
@@ -78,7 +78,7 @@ export default {
             'test',
     	]),
 		quickInto(){
-			this.$store.dispatch(cmd.emit , {
+			this.$store.commit(EMIT_FLAG , {
 				cmd: cmd.quickInto,
 				params:{
 					uid: this.$route.params.userId,

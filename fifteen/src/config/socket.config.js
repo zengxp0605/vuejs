@@ -23,6 +23,9 @@ export const cmd = {
     chargeMoney: `${interactiveKey}::chargeMoney`,
     roomShow: `${interactiveKey}::roomShow`,
     gameStart: `${interactiveKey}::gameStart`,
+    countDown: `${interactiveKey}::countDown`,
+    roomLeave: `${interactiveKey}::roomLeave`,
+    quickInto: `${interactiveKey}::quickInto`,
 }
 
 config.cmd = cmd;

@@ -1,7 +1,11 @@
 import Vue from 'vue'
+import VueRouter from 'vue-router'
+import routes from '../../routers'
 import * as types from '../../libs/constants'
 import Tools from '../../tools/index'
-import { cmd } from '../../config/socket.config';
+import { cmd, EMIT_FLAG } from '../../config/socket.config';
+Vue.use(VueRouter)
+const router = new VueRouter({ routes })
 
 const state = {
     tableId: '',
@@ -11,15 +15,14 @@ const state = {
     remainPublicBalls: [],
     userPublicBalls: [],
     isStart: false,
-    s_timer: null,
     roundCount: 0,
     speakerId: 0,
     isSpeakerList: {},
     minBetAmount: 0, // 最小押注额
+    remainSecend: 0,
 }
 
 const getters = {
-    // tableInfo: (state, getters, rootState) => state.tableInfo,
     isSpeakerList: (state) => {
         let isSpeakerList = {};
         for (let id in state.users) {
@@ -38,32 +41,86 @@ const getters = {
 }
 
 const actions = {
-    // [types.ROOM_INTO]: ({ commit }, params) => commit(cmd.emit, { cmd: cmd.roomInto, params }),
+    [types.ROOM_INTO]: ({ commit }, params) => commit(EMIT_FLAG, { cmd: cmd.roomInto, params }),
     [types.USER_BET]: ({ commit, state }, params) => {
         commit('testTmp');
-        if (params.betAmount < state.minBetAmount) {
-            Tools.warn('押注金额不能小于最低押注额:' + state.minBetAmount);
-            return;
-        }
-        commit(cmd.emit, { cmd: cmd.bet, params })
+        // if (params.betAmount < state.minBetAmount) {
+        //     Tools.warn('押注金额不能小于最低押注额:' + state.minBetAmount);
+        //     return;
+        // }
+        commit(EMIT_FLAG, { cmd: cmd.bet, params })
     },
-    s_timer: ({ commit }, params) => {
-        console.log('s_timer');
+    leave: ({ commit, rootState }) => {
+        let params = { uid: rootState.userId };
+        commit(EMIT_FLAG, { cmd: cmd.roomLeave, params })
+    },
 
-    },
 
     [cmd.chargeMoney]({ commit, state }, data) {
         console.log('actions=========> 兑入:', data.amount);
     },
-    [cmd.roomShow]({ commit, state}, data) {
+    [cmd.bet]({ commit, state }, data) {
+        if (data.isBaoDian) {
+            Tools.warn('爆点了!!!!!!!!');
+        }
+        commit(cmd.bet, data);
+    },
+    [cmd.play]({ commit, state }, data) {
+        commit(cmd.play, data);
+    },
+    [cmd.gameOver]({ commit, state }, data) {
+        commit(cmd.gameOver, data);
+    },
+    [cmd.gameStart]({ commit, state }, data) {
+        commit(cmd.gameStart, data);
+    },
+    [cmd.roomLeave]({ commit, state }, data) {
+        console.log('----roomLeave-----', data);
+    },
+    [cmd.roomShow](store, data) {
+        let { commit, state, rootState } = store;
+        console.log('----------', rootState.userId, state.userId);
+        let hash = `/table/${data.roomId}/${data.uid}`;
+        //window.location.hash = hash;
+        console.log(`actions -----> ${cmd.roomShow} -> hash: ${hash}`, router, Vue.$route, Vue.router, Vue.route, Vue.$route);
+
         // TODO:  切换路由
-        console.log(`actions==> ${cmd.roomShow}`, Vue.$router, Vue);
+        router.push({ name: 'table', params: { userId: data.uid, roomId: data.roomId } })
+        
         commit(cmd.roomShow, data);
+    },
+    [cmd.countDown]({ commit, state}, data) {
+        console.log('开始倒计时剩余: ', data.secend);
+        Vue.s_timer = null;
+        clearInterval(Vue.s_timer);
+        commit('setSecend', data.secend);
+        // 倒计时
+        Vue.s_timer = setInterval(() => {
+            if (state.remainSecend <= 0) {
+                Vue.s_timer = null;
+                clearInterval(Vue.s_timer);
+                console.log('clearSecendInterval', state.remainSecend);
+                return;
+            }
+            console.log('decrSecend', state.remainSecend);
+            commit('decrSecend');
+        }, 1000);
     },
 
 }
 
 const mutations = {
+    decrSecend() {
+        state.remainSecend -= 1;
+    },
+    setSecend(state, s) {
+        state.remainSecend = s;
+    },
+    clearSecendInterval() {
+        // state.remainSecend = 0;
+        // s_timer = null;
+        // clearInterval(s_timer);
+    },
 
     [cmd.roomShow](state, data) {
         console.log('=========> roomShow:', JSON.stringify(data));
@@ -77,20 +134,7 @@ const mutations = {
             state.speakerId = data.tableInfo.speaker_uid;
         }
         //state.isStart = state.remainPublicBalls.length > 0 ? true : false;
-        console.log('开始倒计时剩余: ', state.tableInfo.secend);
-        actions.s_timer('s_timer');
-        if (state.tableInfo.secend > 0) { // 倒计时
-            state.s_timer = setInterval(() => {
-                if (state.tableInfo.secend <= 0) {
-                    state.s_timer = null;
-                    clearInterval(state.s_timer);
-                    return;
-                }
-                state.tableInfo.secend -= 1;
-            }, 1000);
-        } else {
-            state.tableInfo.secend = 0;
-        }
+
         state.tableId = state.tableInfo.tid;
         state.minBetAmount = state.tableInfo.last_bet_amount;
 
@@ -109,7 +153,6 @@ const mutations = {
         if (data.remainPublicBalls) {
             state.remainPublicBalls = data.remainPublicBalls;
         }
-
 
         if (data.mainAmount) {
             console.log('bet => 更新总池金额', data.mainAmount);
@@ -144,13 +187,10 @@ const mutations = {
         console.log('=========> play:', state.userId, JSON.stringify(data, true, ' '));
         state.roundCount = data.roundCount;
         state.speakerId = data.speakerId;
-
-
     },
 
     [cmd.gameOver](state, data) {
         console.log('=========> gameOver:', JSON.stringify(data, true, ' '));
-
     },
 
 }

@@ -6,9 +6,9 @@
 			</div>
 		</div>
 
-		<div class="row">
+		<div class="row" v-show="$store.state.table.isWaiting">
 			<div class="col-md-12">
-				<h3 class="bg-primary text-center" v-show="$store.state.table.isWaiting">等候匹配....</h3>
+				<h3 class="bg-primary text-center">等候匹配....</h3>
 			</div>
 		</div>
 
@@ -21,7 +21,7 @@
 							<tr>
 								<td>tableId: </td>
 								<td>{{ $store.state.table.tableId }}</td>
-								<td>secend: 　{{ $store.state.table.tableInfo.secend }}</td>
+								<td>secend: 　{{ $store.state.table.remainSecend || 0 }}</td>
 							</tr>
 							<tr>
 								<td>公共球: </td>
@@ -124,7 +124,20 @@
 					</div>
 				</div>
 			</div>
+
 		</section>
+
+		<div class="row">
+			<div class="col-md-12">
+				<div class="panel panel-default">
+
+					<div class="panel-body">
+						<button class="btn btn-primary" v-on:click="changeTable()">换桌</button>
+						<button class="btn btn-warning" v-on:click="leave()">退出</button>
+					</div>
+				</div>
+			</div>
+		</div>
 
 	</div>
 </template>
@@ -141,14 +154,14 @@ export default {
   },
   created: function() {
 	  console.log('table created');
+
+      this[types.UPDATE_USER_ID](this.$route.params.userId);
       this[types.ROOM_INTO]({
             uid: this.$route.params.userId,
             roomId: this.$route.params.roomId,
       });
      
 	 //console.log('this.$http',  this.$http, this.$http.get);
-
-      this[types.UPDATE_USER_ID](this.$route.params.userId);
   },
   computed: mapGetters([
      'isSpeakerList',
@@ -159,6 +172,7 @@ export default {
         types.ROOM_INTO,
         types.USER_BET,
 		types.UPDATE_USER_ID,
+		'leave',
     ]),
 	bet (params){
 		console.log('-------bet ', params, this.$route.params.userId, this.amount);
@@ -170,6 +184,10 @@ export default {
 	changeAmount(a){
 		this.amount = a;
 	},
+	changeTable(){
+		console.log('----changeTable----');
+	},
+
 	toNumber(s){
 		return s ? parseInt(s) : 0;
 	}
@@ -178,47 +196,3 @@ export default {
 }
 
 </script>
-<!--
-<style scoped>
-	button {
-		padding: 2px;
-		cursor: pointer;
-		margin-left: 5px;
-	}
-	
-	table {
-		border-collapse: collapse;
-		empty-cells: show;
-		border: none;
-		margin-top: 10px;
-		display: block;
-		height: auto;
-	}
-	
-	table td,
-	table th {
-		border: 1px solid #d3d3d3;
-		text-align: center;
-		padding: 3px;
-	}
-	
-	td.left,
-	td.right {
-		width: 50%;
-		min-width: 100px;
-		min-height: 20px;
-	}
-	
-	.my-bgc {
-		background-color: lightblue;
-	}
-	
-	.active {
-		background-color: grey;
-		color: red;
-	}
-	
-	.oper-bar {
-		margin-top: 15px;
-	}
-</style>-->

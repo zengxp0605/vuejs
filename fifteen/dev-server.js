@@ -27,6 +27,9 @@ app.get('/', function(req, res){
     res.sendFile(path.join(__dirname, 'index.html'));
 });
 
+// 需要加载静态资源
+app.use('/', express.static(__dirname + '/')); //指定静态资源目录
+
 app.listen(port, 'localhost', function (err) {
     if (err) {
         console.log(err);

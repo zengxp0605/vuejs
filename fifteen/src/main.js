@@ -17,8 +17,8 @@ Vue.use(VueRouter)
 // console.log(Test);
 
 const router = new VueRouter({ routes })
-/* eslint-disable no-new */
-new Vue({
+
+const vm = new Vue({
   // el: '#app',
   router,
   store,
